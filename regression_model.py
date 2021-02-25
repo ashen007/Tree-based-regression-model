@@ -49,8 +49,7 @@ class TreeBuilder:
 
     def builder(self, data):
         lSet, rSet, node = self.bin_split(data)
-        Tree = dict()
-        Tree['node'] = node
+        Tree = {'node': node}
 
         if lSet.shape[0] >= self.break_point:
             Tree['left'] = self.builder(lSet)
