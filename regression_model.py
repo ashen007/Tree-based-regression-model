@@ -30,3 +30,18 @@ class RootNode:
         self.__tree = pd.DataFrame(self.__tree, columns=['thresh', 'cost'])
         best_root = self.__tree[self.__tree['cost'] == np.min(self.__tree['cost'])].thresh.values[0]
         return [self.__tree, best_root]
+
+
+class TreeBuilder(RootNode):
+    def __init__(self, data, feature, target, start):
+        super().__init__(data, feature, target, start)
+
+    def bin_split(self):
+        node = self.best_split()[1]
+        left = self.__dataset[self.__dataset[self.__feature] < node]
+        right = self.__dataset[self.__dataset[self.__feature] >= node]
+
+        return left, right
+
+    def builder(self):
+        lSet,rSet = self.bin_split()
