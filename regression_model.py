@@ -39,7 +39,6 @@ class TreeBuilder:
         self.target = target
         self.start = start
         self.break_point = break_point
-        self.Tree = dict()
 
     def bin_split(self, data):
         node = RootNode(data, self.feature, self.target, self.start).best_split()[1]
@@ -50,16 +49,17 @@ class TreeBuilder:
 
     def builder(self, data):
         lSet, rSet, node = self.bin_split(data)
-        self.Tree['node'] = node
+        Tree = dict()
+        Tree['node'] = node
 
         if lSet.shape[0] >= self.break_point:
-            self.Tree['left'] = self.builder(lSet)
+            Tree['left'] = self.builder(lSet)
         else:
-            self.Tree['left'] = np.mean(lSet[self.target])
+            Tree['left'] = np.mean(lSet[self.target])
 
         if rSet.shape[0] >= self.break_point:
-            self.Tree['right'] = self.builder(rSet)
+            Tree['right'] = self.builder(rSet)
         else:
-            self.Tree['right'] = np.mean(rSet)
+            Tree['right'] = np.mean(rSet[self.target])
 
-        return self.Tree
+        return Tree
