@@ -62,3 +62,5 @@ class TreeBuilder:
             Tree['right'] = np.mean(rSet[self.target])
 
         return Tree
+
+
