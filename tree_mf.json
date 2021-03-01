@@ -1,0 +1,31 @@
+{
+  "node": 1486.5,
+  "feature": "GrLivArea",
+  "left": 137956.81142857144,
+  "right": {
+    "node": 2142.5,
+    "feature": "GrLivArea",
+    "left": 209986.13402061857,
+    "right": {
+      "node": 8660.0,
+      "feature": "LotArea",
+      "left": 150139.22222222222,
+      "right": {
+        "node": 2375.0,
+        "feature": "GrLivArea",
+        "left": 265246.07692307694,
+        "right": {
+          "node": 11731.5,
+          "feature": "LotArea",
+          "left": 275195.04761904763,
+          "right": {
+            "node": 3224.5,
+            "feature": "GrLivArea",
+            "left": 322697.6666666667,
+            "right": 424375.0
+          }
+        }
+      }
+    }
+  }
+}
