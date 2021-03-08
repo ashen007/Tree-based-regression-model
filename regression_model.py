@@ -2,6 +2,15 @@ import numpy as np
 import pandas as pd
 
 
+class RegressionTree:
+    def __init__(self, x, y, data, interval, max_depth=0):
+        self.x = x
+        self.y = y
+        self.data = data
+        self.interval = interval
+        self.depth = max_depth
+
+
 class RootNode:
     def __init__(self, data, feature, target, start):
         self.tree = list()
