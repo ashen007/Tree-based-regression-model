@@ -23,14 +23,14 @@ class BestSplit(RegressionTree):
         return lSet, rSet, thresh
 
     def calculate_RMSE(self, l, r):
-        l_avg = np.mean(l[self.data[self.y]])
-        r_avg = np.mean(r[self.data[self.y]])
-        RMSE = np.sum(np.sqrt((l[self.data[self.y]] - l_avg) ** 2)) + np.sum(
-            np.sqrt((r[self.data[self.y]] - r_avg) ** 2))
+        l_avg = np.mean(l[self.y])
+        r_avg = np.mean(r[self.y])
+        RMSE = np.sum(np.sqrt((l[self.y] - l_avg) ** 2)) + np.sum(
+            np.sqrt((r[self.y] - r_avg) ** 2))
         return RMSE
 
     def best_split(self):
-        for feat in self.y:
+        for feat in self.x:
             for i in range(0, self.data.shape[0] - self.interval):
                 left, right, thresh = self.bin_split(i, feat)
                 rmse = self.calculate_RMSE(left, right)
@@ -40,16 +40,15 @@ class BestSplit(RegressionTree):
 
         if best_root.shape[0] > 1:
             best_root = best_root.sample(1)
-        return best_root.feature.values[0], best_root.thresh.values[0]
+        return best_root.feature.values[0], best_root.thresh.values[0], self.tree
 
-
-class RootNode:
-    def __init__(self, data, feature, target, start):
-        self.tree = list()
-        self.start_point = start
-        self.feature = feature
-        self.target = target
-        self.dataset = data
+# class RootNode:
+#     def __init__(self, data, feature, target, start):
+#         self.tree = list()
+#         self.start_point = start
+#         self.feature = feature
+#         self.target = target
+#         self.dataset = data
 
     # def __bin_split(self, i):
     #     thresh = np.mean(self.dataset[self.feature].iloc[i:i + self.start_point])
@@ -63,14 +62,14 @@ class RootNode:
     #     RMSE = np.sum(np.sqrt((l[self.target] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.target] - r_avg) ** 2))
     #     return RMSE
 
-    def best_split(self):
-        for i in range(0, self.dataset.shape[0] - self.start_point):
-            left, right, thresh = self.__bin_split(i)
-            rmse = self.__calculate_RMSE(left, right)
-            self.tree.append([thresh, rmse])
-        self.tree = pd.DataFrame(self.tree, columns=['thresh', 'cost'])
-        best_root = self.tree[self.tree['cost'] == np.min(self.tree['cost'])].thresh.values[0]
-        return [self.tree, best_root]
+    # def best_split(self):
+    #     for i in range(0, self.dataset.shape[0] - self.start_point):
+    #         left, right, thresh = self.__bin_split(i)
+    #         rmse = self.__calculate_RMSE(left, right)
+    #         self.tree.append([thresh, rmse])
+    #     self.tree = pd.DataFrame(self.tree, columns=['thresh', 'cost'])
+    #     best_root = self.tree[self.tree['cost'] == np.min(self.tree['cost'])].thresh.values[0]
+    #     return [self.tree, best_root]
 
 
 class TreeBuilder:
@@ -105,13 +104,13 @@ class TreeBuilder:
         return Tree
 
 
-class BestRootNode:
-    def __init__(self, data, feature, target, start):
-        self.tree = list()
-        self.start_point = start
-        self.feature = feature
-        self.target = target
-        self.dataset = data
+# class BestRootNode:
+#     def __init__(self, data, feature, target, start):
+#         self.tree = list()
+#         self.start_point = start
+#         self.feature = feature
+#         self.target = target
+#         self.dataset = data
 
     # def bin_split(self, i, feat):
     #     thresh = np.mean(self.dataset[feat].iloc[i:i + self.start_point])
@@ -140,12 +139,12 @@ class BestRootNode:
 
 
 class TreeBuilderMF:
-    def __init__(self, data, feature, target, start, break_point):
-        self.data = data
-        self.feature = feature
-        self.target = target
-        self.start = start
-        self.break_point = break_point
+    # def __init__(self, data, feature, target, start, break_point):
+    #     self.data = data
+    #     self.feature = feature
+    #     self.target = target
+    #     self.start = start
+    #     self.break_point = break_point
 
     def bin_split(self, data):
         feat, node = BestRootNode(data, self.feature, self.target, self.start).best_split()
