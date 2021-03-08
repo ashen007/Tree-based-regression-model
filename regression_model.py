@@ -11,6 +11,23 @@ class RegressionTree:
         self.depth = max_depth
 
 
+class BestSplitter(RegressionTree):
+    def __init__(self, x, y, data, interval):
+        super().__init__(x, y, data, interval)
+        self.tree = list()
+
+    def bin_split(self, i, feat):
+        thresh = np.mean(self.data[feat].iloc[i:i + self.interval])
+        lSet = self.data[self.data[feat] < thresh]
+        rSet = self.data[self.data[feat] >= thresh]
+        return lSet, rSet, thresh
+
+    def __calculate_RMSE(self, l, r):
+        l_avg = np.mean(l[self.data[self.y]])
+        r_avg = np.mean(r[self.data[self.y]])
+        RMSE = np.sum(np.sqrt((l[self.data[self.y]] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.data[self.y]] - r_avg) ** 2))
+        return RMSE
+
 class RootNode:
     def __init__(self, data, feature, target, start):
         self.tree = list()
@@ -19,17 +36,17 @@ class RootNode:
         self.target = target
         self.dataset = data
 
-    def __bin_split(self, i):
-        thresh = np.mean(self.dataset[self.feature].iloc[i:i + self.start_point])
-        lSet = self.dataset[self.dataset[self.feature] < thresh]
-        rSet = self.dataset[self.dataset[self.feature] >= thresh]
-        return lSet, rSet, thresh
+    # def __bin_split(self, i):
+    #     thresh = np.mean(self.dataset[self.feature].iloc[i:i + self.start_point])
+    #     lSet = self.dataset[self.dataset[self.feature] < thresh]
+    #     rSet = self.dataset[self.dataset[self.feature] >= thresh]
+    #     return lSet, rSet, thresh
 
-    def __calculate_RMSE(self, l, r):
-        l_avg = np.mean(l[self.target])
-        r_avg = np.mean(r[self.target])
-        RMSE = np.sum(np.sqrt((l[self.target] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.target] - r_avg) ** 2))
-        return RMSE
+    # def __calculate_RMSE(self, l, r):
+    #     l_avg = np.mean(l[self.target])
+    #     r_avg = np.mean(r[self.target])
+    #     RMSE = np.sum(np.sqrt((l[self.target] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.target] - r_avg) ** 2))
+    #     return RMSE
 
     def best_split(self):
         for i in range(0, self.dataset.shape[0] - self.start_point):
@@ -81,17 +98,17 @@ class BestRootNode:
         self.target = target
         self.dataset = data
 
-    def bin_split(self, i, feat):
-        thresh = np.mean(self.dataset[feat].iloc[i:i + self.start_point])
-        lSet = self.dataset[self.dataset[feat] < thresh]
-        rSet = self.dataset[self.dataset[feat] >= thresh]
-        return lSet, rSet, thresh
+    # def bin_split(self, i, feat):
+    #     thresh = np.mean(self.dataset[feat].iloc[i:i + self.start_point])
+    #     lSet = self.dataset[self.dataset[feat] < thresh]
+    #     rSet = self.dataset[self.dataset[feat] >= thresh]
+    #     return lSet, rSet, thresh
 
-    def calculate_RMSE(self, l, r):
-        l_avg = np.mean(l[self.target])
-        r_avg = np.mean(r[self.target])
-        RMSE = np.sum(np.sqrt((l[self.target] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.target] - r_avg) ** 2))
-        return RMSE
+    # def calculate_RMSE(self, l, r):
+    #     l_avg = np.mean(l[self.target])
+    #     r_avg = np.mean(r[self.target])
+    #     RMSE = np.sum(np.sqrt((l[self.target] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.target] - r_avg) ** 2))
+    #     return RMSE
 
     def best_split(self):
         for feat in self.feature:
