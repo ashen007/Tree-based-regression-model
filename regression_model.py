@@ -11,7 +11,7 @@ class RegressionTree:
         self.depth = max_depth
 
 
-class BestSplitter(RegressionTree):
+class BestSplit(RegressionTree):
     def __init__(self, x, y, data, interval):
         super().__init__(x, y, data, interval)
         self.tree = list()
@@ -22,11 +22,26 @@ class BestSplitter(RegressionTree):
         rSet = self.data[self.data[feat] >= thresh]
         return lSet, rSet, thresh
 
-    def __calculate_RMSE(self, l, r):
+    def calculate_RMSE(self, l, r):
         l_avg = np.mean(l[self.data[self.y]])
         r_avg = np.mean(r[self.data[self.y]])
-        RMSE = np.sum(np.sqrt((l[self.data[self.y]] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.data[self.y]] - r_avg) ** 2))
+        RMSE = np.sum(np.sqrt((l[self.data[self.y]] - l_avg) ** 2)) + np.sum(
+            np.sqrt((r[self.data[self.y]] - r_avg) ** 2))
         return RMSE
+
+    def best_split(self):
+        for feat in self.y:
+            for i in range(0, self.data.shape[0] - self.interval):
+                left, right, thresh = self.bin_split(i, feat)
+                rmse = self.calculate_RMSE(left, right)
+                self.tree.append([feat, thresh, rmse])
+        self.tree = pd.DataFrame(self.tree, columns=['feature', 'thresh', 'cost'])
+        best_root = self.tree[self.tree['cost'] == np.min(self.tree['cost'])]
+
+        if best_root.shape[0] > 1:
+            best_root = best_root.sample(1)
+        return best_root.feature.values[0], best_root.thresh.values[0]
+
 
 class RootNode:
     def __init__(self, data, feature, target, start):
@@ -110,18 +125,18 @@ class BestRootNode:
     #     RMSE = np.sum(np.sqrt((l[self.target] - l_avg) ** 2)) + np.sum(np.sqrt((r[self.target] - r_avg) ** 2))
     #     return RMSE
 
-    def best_split(self):
-        for feat in self.feature:
-            for i in range(0, self.dataset.shape[0] - self.start_point):
-                left, right, thresh = self.bin_split(i, feat)
-                rmse = self.calculate_RMSE(left, right)
-                self.tree.append([feat, thresh, rmse])
-        self.tree = pd.DataFrame(self.tree, columns=['feature', 'thresh', 'cost'])
-        best_root = self.tree[self.tree['cost'] == np.min(self.tree['cost'])]
-
-        if best_root.shape[0] > 1:
-            best_root = best_root.sample(1)
-        return best_root.feature.values[0], best_root.thresh.values[0]
+    # def best_split(self):
+    #     for feat in self.feature:
+    #         for i in range(0, self.dataset.shape[0] - self.start_point):
+    #             left, right, thresh = self.bin_split(i, feat)
+    #             rmse = self.calculate_RMSE(left, right)
+    #             self.tree.append([feat, thresh, rmse])
+    #     self.tree = pd.DataFrame(self.tree, columns=['feature', 'thresh', 'cost'])
+    #     best_root = self.tree[self.tree['cost'] == np.min(self.tree['cost'])]
+    #
+    #     if best_root.shape[0] > 1:
+    #         best_root = best_root.sample(1)
+    #     return best_root.feature.values[0], best_root.thresh.values[0]
 
 
 class TreeBuilderMF:
