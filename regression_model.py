@@ -56,11 +56,13 @@ class TreeBuilder(BestSplit):
 
     def builder(self, data, depth=0):
         lSet, rSet, node, feature = self.bin_split(data, )
-        Tree = {'node': node, 'feature': feature, 'left': np.mean(lSet[self.y])}
+        Tree = {'node': node, 'feature': feature}
 
-        if depth < self.depth:
+        if depth < self.depth and lSet.shape[0] >= 20:
+            Tree['left'] = np.mean(lSet[self.y])
             Tree['right'] = self.builder(rSet, depth + 1)
         else:
             Tree['right'] = np.mean(rSet[self.y])
 
         return Tree
+
