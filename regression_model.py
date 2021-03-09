@@ -12,8 +12,8 @@ class RegressionTree:
 
 
 class BestSplit(RegressionTree):
-    def __init__(self, x, y, data, interval,max_depth):
-        super().__init__(x, y, data, interval,max_depth)
+    def __init__(self, x, y, data, interval, max_depth):
+        super().__init__(x, y, data, interval, max_depth)
         self.tree = list()
 
     def bin_split(self, i, feat):
@@ -39,15 +39,16 @@ class BestSplit(RegressionTree):
         best_root = self.tree[self.tree['cost'] == np.min(self.tree['cost'])]
 
         if best_root.shape[0] > 1:
-            best_root = best_root.sample(1)
+            best_root = best_root.sort_values(by='thresh').head(1)
         return [best_root.feature.values[0], best_root.thresh.values[0], self.tree]
 
+
 class TreeBuilder(BestSplit):
-    def __init__(self, x, y, data, interval,max_depth):
-        super().__init__(x, y, data, interval,max_depth)
+    def __init__(self, x, y, data, interval, max_depth):
+        super().__init__(x, y, data, interval, max_depth)
 
     def bin_split(self, data, **kwargs):
-        feature, node = BestSplit(data=data, x=self.x, y=self.y, interval=self.interval,max_depth=5).best_split()[:2]
+        feature, node = BestSplit(data=data, x=self.x, y=self.y, interval=self.interval, max_depth=5).best_split()[:2]
         left = data[data[feature] < node]
         right = data[data[feature] >= node]
 
@@ -57,8 +58,8 @@ class TreeBuilder(BestSplit):
         lSet, rSet, node, feature = self.bin_split(data, )
         Tree = {'node': node, 'feature': feature, 'left': np.mean(lSet[self.y])}
 
-        if depth<self.depth:
-            Tree['right'] = self.builder(rSet,depth+1)
+        if depth < self.depth:
+            Tree['right'] = self.builder(rSet, depth + 1)
         else:
             Tree['right'] = np.mean(rSet[self.y])
 
